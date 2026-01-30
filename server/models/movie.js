@@ -6,24 +6,19 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       validate: { notEmpty: { msg: "Title is required" } }
     },
-    synopsis: {
-      type: DataTypes.TEXT,
-      allowNull: false
-    },
-    trailerUrl: {
-      type: DataTypes.STRING,
-    },
-    imgUrl: {
-      type: DataTypes.STRING,
+    category: DataTypes.STRING,
+    src: DataTypes.STRING,
+    year: DataTypes.STRING,
+    type: DataTypes.STRING,
+    isPremium: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
     },
     rating: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.FLOAT,
       defaultValue: 0
     },
-    status: {
-      type: DataTypes.STRING,
-      defaultValue: 'Active'
-    }
+    description: DataTypes.TEXT
   }, {});
   
   Movie.associate = function(models) {

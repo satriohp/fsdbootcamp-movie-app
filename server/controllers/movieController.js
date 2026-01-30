@@ -1,7 +1,6 @@
 const { Movie, Genre } = require('../models');
 
 class MovieController {
-  // Ambil semua film beserta genrenya
   static async getAllMovies(req, res, next) {
     try {
       const movies = await Movie.findAll({
@@ -15,7 +14,7 @@ class MovieController {
 
       const formattedMovies = movies.map(m => {
         const movie = m.toJSON();
-        movie.genres = movie.Genres.map(g => g.name);
+        movie.genres = movie.Genres ? movie.Genres.map(g => g.name) : [];
         delete movie.Genres;
         return movie;
       });
@@ -39,7 +38,11 @@ class MovieController {
 
       if (!movie) throw { status: 404, message: "Movie not found" };
 
-      res.status(200).json(movie);
+      const movieData = movie.toJSON();
+      movieData.genres = movieData.Genres ? movieData.Genres.map(g => g.name) : [];
+      delete movieData.Genres;
+
+      res.status(200).json(movieData);
     } catch (err) {
       next(err);
     }
@@ -47,8 +50,19 @@ class MovieController {
 
   static async createMovie(req, res, next) {
     try {
-      const { title, category, imgUrl, rating, synopsis, status } = req.body;
-      const movie = await Movie.create({ title, category, imgUrl, rating, synopsis, status });
+      const { title, category, src, year, type, isPremium, rating, description } = req.body;
+      
+      const movie = await Movie.create({ 
+        title, 
+        category, 
+        src, 
+        year, 
+        type, 
+        isPremium, 
+        rating, 
+        description 
+      });
+
       res.status(201).json(movie);
     } catch (err) {
       next(err);
@@ -58,12 +72,22 @@ class MovieController {
   static async updateMovie(req, res, next) {
     try {
       const { id } = req.params;
-      const { title, category, imgUrl, rating, synopsis, status } = req.body;
+      const { title, category, src, year, type, isPremium, rating, description } = req.body;
       
       const movie = await Movie.findByPk(id);
       if (!movie) throw { status: 404, message: "Movie not found" };
 
-      await movie.update({ title, category, imgUrl, rating, synopsis, status });
+      await movie.update({ 
+        title, 
+        category, 
+        src, 
+        year, 
+        type, 
+        isPremium, 
+        rating, 
+        description 
+      });
+
       res.status(200).json(movie);
     } catch (err) {
       next(err);
@@ -74,10 +98,11 @@ class MovieController {
     try {
       const { id } = req.params;
       const movie = await Movie.findByPk(id);
+      
       if (!movie) throw { status: 404, message: "Movie not found" };
 
       await movie.destroy();
-      res.status(200).json({ message: `Movie ${movie.title} has been deleted` });
+      res.status(200).json({ message: `Movie with id ${id} has been deleted` });
     } catch (err) {
       next(err);
     }
