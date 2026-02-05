@@ -76,5 +76,3 @@ const movieSchema = z.object({
   src: z.string().url().optional().or(z.literal(''))
 });
 ```
-### Author
-Satrio HP - GitHub Profile
