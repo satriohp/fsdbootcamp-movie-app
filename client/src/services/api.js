@@ -12,8 +12,9 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-export const getMovies = () => api.get('/movie'); 
-export const deleteMovie = (id) => api.delete(`/movie/${id}`);
-export const addMovie = (movieData) => api.post('/movie', movieData);
+export const getMovies = () => api.get('/movies'); 
+export const deleteMovie = (id) => api.delete(`/movies/${id}`);
+export const addMovie = (movieData) => api.post('/movies', movieData);
 
 export default api;
+

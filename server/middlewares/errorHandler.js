@@ -1,15 +1,21 @@
 module.exports = (err, req, res, next) => {
   let status = err.status || 500;
   let message = err.message || 'Internal Server Error';
+  let errors = [];
 
-  if (err.name === 'SequelizeUniqueConstraintError') {
+  if (err.name === 'ZodError') {
+    status = 400;
+    message = 'Validation Error';
+    errors = err.errors.map(e => e.message);
+  } 
+  else if (err.name === 'SequelizeUniqueConstraintError') {
     status = 400;
     message = err.errors[0].message || 'Email sudah terdaftar';
-  } else if (err.name === 'SequelizeValidationError') {
+  } 
+  else if (err.name === 'SequelizeValidationError') {
     status = 400;
     message = err.errors[0].message;
   } 
-  
   else if (err.name === 'JsonWebTokenError') {
     status = 401;
     message = 'Token tidak valid';
@@ -24,6 +30,7 @@ module.exports = (err, req, res, next) => {
 
   res.status(status).json({ 
     success: false,
-    message 
+    message,
+    ...(errors.length > 0 && { errors }) 
   });
 };

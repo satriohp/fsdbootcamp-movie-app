@@ -65,20 +65,26 @@ export default function Home() {
     if (!newMovie.title) return showToast("Judul wajib diisi", "error");
 
     const movieToSave = {
-      ...newMovie,
-      src: newMovie.src || "https://placehold.co/400x600?text=No+Poster",
+      title: newMovie.title,
+      category: newMovie.category,
+      src: newMovie.src || "", 
       year: new Date().getFullYear().toString(),
-      rating: "5.0/5", 
-      isPremium: true, 
-      description: `Film ${newMovie.title} ditambahkan ke Database.`
+      type: newMovie.type,
+      description: `Film ${newMovie.title} ditambahkan.`,
+      isPremium: false,
+      rating: 5, 
+      genreIds: [] 
     };
 
     try {
       await dispatch(addMovieAction(movieToSave)).unwrap();
-      setNewMovie({ title: "", src: "", category: "trending", type: "film" });
+      
+      setNewMovie({ title: "", category: "trending", src: "", type: "film" });
       showToast("Movie berhasil ditambahkan!");
     } catch (error) {
-      showToast("Gagal menyambung ke API", "error");
+      const errorMsg = error.message || "Gagal menambah movie (ID mungkin bentrok)";
+      showToast(errorMsg, "error");
+      console.error("Detail Error:", error);
     }
   };
 

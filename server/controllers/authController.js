@@ -1,11 +1,14 @@
 const { User } = require('../models');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const { registerSchema, loginSchema } = require('../validations/schema');
 
 class AuthController {
   static async register(req, res, next) {
     try {
-      const { username, email, password } = req.body;
+      const validatedData = registerSchema.parse(req.body);
+      
+      const { username, email, password } = validatedData;
       
       const user = await User.create({ 
         username, 
@@ -26,8 +29,8 @@ class AuthController {
 
   static async login(req, res, next) {
     try {
-      const { email, password } = req.body;
-      if (!email || !password) throw { status: 400, message: "Email/Password is required" };
+      const validatedData = loginSchema.parse(req.body);
+      const { email, password } = validatedData;
 
       const user = await User.findOne({ where: { email } });
       

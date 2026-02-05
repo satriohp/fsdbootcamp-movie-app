@@ -16,16 +16,24 @@ export default function Login() {
 
       const response = await api.post("/auth/login", payload);
 
-      const { success, data } = response.data;
+      const { access_token, username } = response.data;
 
-      if (success && data.token) {
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("user", JSON.stringify(data.user));
+      if (access_token) {
+        localStorage.setItem("token", access_token);
+        localStorage.setItem("user", JSON.stringify({ username }));
         
-        navigate("/home", { replace: true });
+        window.location.href = "/home";
       }
     } catch (error) {
-      const errorMessage = error.response?.data?.message || "Login gagal, silakan cek kredensial lo.";
+      const errorData = error.response?.data;
+      let errorMessage = "Login gagal.";
+
+      if (errorData?.errors) {
+        errorMessage = errorData.errors.join(", ");
+      } else if (errorData?.message) {
+        errorMessage = errorData.message;
+      }
+
       console.error("Login Error:", errorMessage);
       alert(errorMessage);
     }
@@ -39,9 +47,9 @@ export default function Login() {
         Belum punya akun?{" "}
         <button 
           onClick={() => navigate("/register")} 
-          className="font-semibold hover:underline"
+          className="font-semibold hover:underline text-blue-400"
         >
-          Daftar
+          Daftar di sini
         </button>
       </p>
     </AuthLayout>

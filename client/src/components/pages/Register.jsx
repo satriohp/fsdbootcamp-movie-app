@@ -11,13 +11,22 @@ export default function Register() {
       const { confirmPassword, ...dataToSubmit } = formData;
       const response = await api.post("/auth/register", dataToSubmit);
 
-      if (response.data.success) {
+      if (response.status === 201) {
         alert(`Pendaftaran Berhasil! Halo ${formData.username}, silakan login.`);
         navigate("/login"); 
       }
     } catch (error) {
-      console.error("Register Error:", error.response?.data?.message || error.message);
-      alert(error.response?.data?.message || "Gagal daftar.");
+      const errorData = error.response?.data;
+      let errorMessage = "Gagal daftar.";
+
+      if (errorData?.errors) {
+        errorMessage = errorData.errors.join(", ");
+      } else if (errorData?.message) {
+        errorMessage = errorData.message;
+      }
+
+      console.error("Register Error:", errorMessage);
+      alert(errorMessage);
     }
   };
 

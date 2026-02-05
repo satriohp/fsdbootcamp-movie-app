@@ -1,4 +1,5 @@
-const { Movie, Genre } = require('../models');
+const { Movie, Genre, sequelize } = require('../models'); 
+const { movieSchema } = require('../validations/schema');
 
 class MovieController {
   static async getAllMovies(req, res, next) {
@@ -49,47 +50,45 @@ class MovieController {
   }
 
   static async createMovie(req, res, next) {
+    const t = await sequelize.transaction();
     try {
-      const { title, category, src, year, type, isPremium, rating, description } = req.body;
+      const validatedData = movieSchema.parse(req.body);
+      const { genreIds, ...moviePayload } = validatedData;
       
-      const movie = await Movie.create({ 
-        title, 
-        category, 
-        src, 
-        year, 
-        type, 
-        isPremium, 
-        rating, 
-        description 
-      });
+      const movie = await Movie.create(moviePayload, { transaction: t });
 
+      if (genreIds && genreIds.length > 0) {
+        await movie.addGenres(genreIds, { transaction: t });
+      }
+
+      await t.commit();
       res.status(201).json(movie);
     } catch (err) {
+      await t.rollback();
       next(err);
     }
   }
 
   static async updateMovie(req, res, next) {
+    const t = await sequelize.transaction();
     try {
       const { id } = req.params;
-      const { title, category, src, year, type, isPremium, rating, description } = req.body;
+      const validatedData = movieSchema.parse(req.body);
+      const { genreIds, ...moviePayload } = validatedData;
       
       const movie = await Movie.findByPk(id);
       if (!movie) throw { status: 404, message: "Movie not found" };
 
-      await movie.update({ 
-        title, 
-        category, 
-        src, 
-        year, 
-        type, 
-        isPremium, 
-        rating, 
-        description 
-      });
+      await movie.update(moviePayload, { transaction: t });
 
+      if (genreIds) {
+        await movie.setGenres(genreIds, { transaction: t });
+      }
+
+      await t.commit();
       res.status(200).json(movie);
     } catch (err) {
+      await t.rollback();
       next(err);
     }
   }
