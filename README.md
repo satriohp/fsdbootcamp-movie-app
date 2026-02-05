@@ -65,21 +65,7 @@ npm install
 npm run dev # Vite running on http://localhost:5173
 ```
 
-
-📁 Project Structure
-Plaintext
-├── client/                 # React Application (Vite)
-│   ├── src/
-│   │   ├── components/     # Atomic Design Pattern (Atoms, Molecules, Organisms)
-│   │   ├── services/       # Axios API Config & Interceptors
-│   │   └── store/          # Redux Toolkit Slices (movieSlice.js)
-├── server/                 # Express API
-│   ├── controllers/        # Business Logic (authController, movieController)
-│   ├── migrations/         # Database Schema Versions
-│   ├── models/             # Sequelize Models
-│   ├── seeders/            # Initial Data (Dummy Movies)
-│   └── validations/        # Zod Schema Validations (schema.js)
-🛡️ Validation Example (Zod)
+### Validation Example (Zod)
 Integritas data dijaga ketat oleh schema.js:
 
 JavaScript
@@ -90,6 +76,5 @@ const movieSchema = z.object({
   src: z.string().url().optional().or(z.literal(''))
 });
 ```
-
-👤 Author
+### Author
 Satrio HP - GitHub Profile
