@@ -18,22 +18,23 @@ A robust Fullstack Movie Management Application built with the PERN/MERN stack. 
 
 ---
 
-## 🛠️ Tech Stack
-**Frontend:**
-- React.js (Vite)
-- Redux Toolkit
-- Axios (with Interceptors)
-- Tailwind CSS
+## Tech Stack
 
-**Backend:**
-- Node.js & Express
-- Sequelize ORM
-- Zod (Schema Validation)
-- Bcrypt & JWT
+### Frontend
+- **Framework**: React.js (Vite)
+- **State**: Redux Toolkit
+- **HTTP Client**: Axios (with Interceptors for JWT)
+- **Styling**: Tailwind CSS
+
+### Backend
+- **Runtime**: Node.js & Express
+- **ORM**: Sequelize
+- **Security**: Bcrypt, JSON Web Token (JWT)
+- **Validation**: Zod Schema
 
 ---
 
-## 🏁 Getting Started
+## Getting Started
 
 ### Prerequisites
 - Node.js (v18 or higher)
@@ -41,9 +42,54 @@ A robust Fullstack Movie Management Application built with the PERN/MERN stack. 
 - NPM or Yarn
 
 ### 1. Database Setup
-Sesuaikan konfigurasi database di `server/config/config.json`, lalu jalankan:
+Sesuaikan konfigurasi database di `server/config/config.json`, lalu jalankan perintah ini di terminal folder `server`:
 ```bash
 cd server
 npx sequelize-cli db:create
 npx sequelize-cli db:migrate
 npx sequelize-cli db:seed:all
+```
+
+Note: Jika ada issue ID unik, sinkronkan sequence menggunakan: SELECT setval(pg_get_serial_sequence('"Movies"', 'id'), coalesce(max(id),0) + 1, false) FROM "Movies";.
+
+### 2. Backend Installation & Execution
+```Bash
+cd server
+npm install
+npm run dev # Server running on http://localhost:3000
+```
+### 3. Frontend Installation & Execution
+```Bash
+cd client
+npm install
+npm run dev # Vite running on http://localhost:5173
+```
+
+
+📁 Project Structure
+Plaintext
+├── client/                 # React Application (Vite)
+│   ├── src/
+│   │   ├── components/     # Atomic Design Pattern (Atoms, Molecules, Organisms)
+│   │   ├── services/       # Axios API Config & Interceptors
+│   │   └── store/          # Redux Toolkit Slices (movieSlice.js)
+├── server/                 # Express API
+│   ├── controllers/        # Business Logic (authController, movieController)
+│   ├── migrations/         # Database Schema Versions
+│   ├── models/             # Sequelize Models
+│   ├── seeders/            # Initial Data (Dummy Movies)
+│   └── validations/        # Zod Schema Validations (schema.js)
+🛡️ Validation Example (Zod)
+Integritas data dijaga ketat oleh schema.js:
+
+JavaScript
+```bash
+const movieSchema = z.object({
+  title: z.string().min(1),
+  rating: z.coerce.number().min(0).max(10).default(0),
+  src: z.string().url().optional().or(z.literal(''))
+});
+```
+
+👤 Author
+Satrio HP - GitHub Profile
