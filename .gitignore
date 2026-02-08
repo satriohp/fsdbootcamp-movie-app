@@ -12,3 +12,5 @@ yarn-error.log*
 Thumbs.db
 **/logs/
 *.log
+server/uploads/*
+!server/uploads/.gitkeep

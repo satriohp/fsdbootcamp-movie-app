@@ -8,6 +8,10 @@ module.exports = (sequelize, DataTypes) => {
     },
     category: DataTypes.STRING,
     src: DataTypes.STRING,
+    imgUrl: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
     year: DataTypes.STRING,
     type: DataTypes.STRING,
     isPremium: {
@@ -20,13 +24,13 @@ module.exports = (sequelize, DataTypes) => {
     },
     description: DataTypes.TEXT
   }, {});
-  
-  Movie.associate = function(models) {
-    Movie.belongsToMany(models.Genre, { 
+
+  Movie.associate = function (models) {
+    Movie.belongsToMany(models.Genre, {
       through: 'movie_genres',
-      foreignKey: 'movie_id' 
+      foreignKey: 'movie_id'
     });
   };
-  
+
   return Movie;
 };
